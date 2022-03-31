@@ -10,7 +10,7 @@
         <?php include "css/style.css" ?>
     </style>
 
-    <title>Self Learning 1</title>
+    <title>Aplikasi Pengelolaan Keuangan</title>
 </head>
 
 <body>
@@ -25,12 +25,22 @@
 
     <div class="home-page">
         <?php
+        include "config.php";
         session_start();
-        if (isset($_SESSION)) {
-            echo "Halo, <b>" . $_SESSION['namaDepan'] . " " . $_SESSION['namaTengah'] . " " . $_SESSION['namaBelakang'] . "</b>, Selamat Datang di Aplikasi Pengelolaan Keuangan";
+
+        if (isset($_SESSION['username'])) {
+            $username = $_SESSION['username'];
+
+            $str_query = "SELECT * FROM mahasiswa WHERE username = '$username'";
+            $result = mysqli_query($connection, $str_query);
+            $fetch = mysqli_fetch_array($result);
+
+            echo "Halo, <b>" . $fetch['nama_depan'] . " " . $fetch['nama_tengah'] . " " . $fetch['nama_belakang'] . "</b>, Selamat Datang di Aplikasi Pengelolaan Keuangan";
         } else {
-            echo "Silahkan login terlebih dahulu <br>";
-            echo "<a href='welcome.php'>Kembali</a>";
+            echo '<script type="text/javascript">';
+            echo 'alert("Silahkan login terlebih dahulu!");';
+            echo 'window.location.href = "login.php";';
+            echo '</script>';
         }
         ?>
     </div>

@@ -10,7 +10,7 @@
         <?php include "css/style.css" ?>
     </style>
 
-    <title>Self Learning 1</title>
+    <title>Aplikasi Pengelolaan Keuangan</title>
 </head>
 
 <body>
@@ -29,55 +29,67 @@
         </div>
 
         <?php
+        include "config.php";
+
         session_start();
-        if (isset($_SESSION)) {
+
+        if (isset($_SESSION['username'])) {
+            $username = $_SESSION['username'];
+
+            $str_query = "SELECT * FROM mahasiswa WHERE username = '$username'";
+            $result = mysqli_query($connection, $str_query);
+            $fetch = mysqli_fetch_array($result);
+
             echo "
             <table>
             <tr>
                 <td>Nama Depan</td>
-                <td><b>" . $_SESSION['namaDepan'] . "</b></td>
+                <td><b>" . $fetch['nama_depan'] . "</b></td>
 
                 <td>Nama Tengah</td>
-                <td><b>" . $_SESSION['namaTengah'] . "</b></td>
+                <td><b>" . $fetch['nama_tengah'] . "</b></td>
 
                 <td>Nama Belakang</td>
-                <td><b>" . $_SESSION['namaBelakang'] . "</b></td>
+                <td><b>" . $fetch['nama_belakang'] . "</b></td>
             </tr>
             <tr>
                 <td>Tempat Lahir</td>
-                <td><b>" . $_SESSION['tempatLahir'] . "</b></td>
+                <td><b>" . $fetch['tempat_lahir'] . "</b></td>
 
                 <td>Tanggal Lahir</td>
-                <td><b>" . date_format(date_create($_SESSION['tanggalLahir']), 'd-m-Y') . "</b></td>
+                <td><b>" . date_format(date_create($fetch['tanggal_lahir']), 'd-m-Y') . "</b></td>
 
                 <td>NIK</td>
-                <td><b>" . $_SESSION['nik'] . "</b></td>
+                <td><b>" . $fetch['nik'] . "</b></td>
             </tr>
             <tr>
                 <td>Warga Negara</td>
-                <td><b>" . $_SESSION['wargaNegara'] . "</b></td>
+                <td><b>" . $fetch['warga_negara'] . "</b></td>
 
                 <td>Email</td>
-                <td><b>" . $_SESSION['email'] . "</b></td>
+                <td><b>" . $fetch['email'] . "</b></td>
 
                 <td>No HP</td>
-                <td><b>" . $_SESSION['noHP'] . "</b></td>
+                <td><b>" . $fetch['no_hp'] . "</b></td>
             </tr>
             <tr>
                 <td>Alamat</td>
-                <td><b>" . $_SESSION['alamat'] . "</b></td>
+                <td><b>" . $fetch['alamat'] . "</b></td>
 
                 <td>Kode Pos</td>
-                <td><b>" . $_SESSION['kodePos'] . "</b></td>
+                <td><b>" . $fetch['kode_pos'] . "</b></td>
 
                 <td>Foto Profil</td>
-                <td><img src='uploads/" . $_SESSION['fotoProfil'] . "' width='150'></td>
+                <td><img src='uploads/" . $fetch['foto_profil'] . "' width='120'></td>
             </tr>
         </table>
+        <div class='edit-btn'><button><a class = 'edit-a' href='editProfile.php?id=" . $fetch['id'] . "'>Edit</a></button><br></div>
             ";
         } else {
-            echo "Silahkan login terlebih dahulu <br>";
-            echo "<a href='welcome.php'>Kembali</a>";
+            echo '<script type="text/javascript">';
+            echo 'alert("Silahkan login terlebih dahulu!");';
+            echo 'window.location.href = "login.php";';
+            echo '</script>';
         }
         ?>
     </div>

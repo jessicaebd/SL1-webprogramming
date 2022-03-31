@@ -10,7 +10,7 @@
         <?php include "css/style.css" ?>
     </style>
 
-    <title>Document</title>
+    <title>Aplikasi Pengelolaan Keuangan</title>
 </head>
 
 <body>
@@ -20,20 +20,32 @@
         </div>
 
         <?php
+        include "config.php";
         session_start();
 
         if (isset($_POST['login'])) {
-            if (isset($_SESSION)) {
-                if (($_POST['usernameLogin'] == $_SESSION['username']) && ($_POST['passwordLogin'] == $_SESSION['password1'])) {
-                    echo "Login Berhasil<br>";
-                    header('Location: home.php');
+            $username = $_POST['usernameLogin'];
+            $password = $_POST['passwordLogin'];
+
+            $str_query = "SELECT * FROM mahasiswa WHERE username = '$username'";
+            $result = mysqli_query($connection, $str_query);
+            $fetch = mysqli_fetch_array($result);
+
+            if ($fetch) {
+                if (($username == $fetch['username']) & ($password == $fetch['password'])) {
+                    $_SESSION['username'] = $username;
+                    header("Location: home.php");
                 } else {
-                    echo "Login Gagal<br>";
-                    echo "<br><a href='register.php'><u>Kembali</u></a>";
+                    echo '<script type="text/javascript">';
+                    echo 'alert("Password Salah!");';
+                    echo 'window.location.href = "login.php";';
+                    echo '</script>';
                 }
             } else {
-                echo "Silahkan register terlebih dahulu <br>";
-                echo "<a href='index.php'>Kembali</a>";
+                echo '<script type="text/javascript">';
+                echo 'alert("Username tidak ditemukan!");';
+                echo 'window.location.href = "login.php";';
+                echo '</script>';
             }
         }
         ?>

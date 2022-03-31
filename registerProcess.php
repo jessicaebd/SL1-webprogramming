@@ -10,7 +10,7 @@
         <?php include "css/style.css" ?>
     </style>
 
-    <title>Document</title>
+    <title>Aplikasi Pengelolaan Keuangan</title>
 </head>
 
 <body>
@@ -20,7 +20,7 @@
         </div>
 
         <?php
-        session_start();
+        include "config.php";
 
         if (isset($_POST['Register'])) {
             $namaDepan = $_POST['namaDepan'];
@@ -40,7 +40,7 @@
             $password2 = $_POST['password2'];
 
 
-            // Validate
+            // Validate input
             $errors = array();
 
             if (empty($namaDepan)) {
@@ -163,44 +163,47 @@
             // Handle File Upload
             $fileName = $_FILES['fotoProfil']['name'];
             $fileTmpName = $_FILES['fotoProfil']['tmp_name'];
-
             $dirUpload = "uploads/";
-
+            // Rename file name before saving to dir
+            $temp = explode(".", $fileName);
+            $fileName = round(microtime(true)) . "_" . $username . '.' . end($temp);
             $uploaded = move_uploaded_file($fileTmpName, $dirUpload . $fileName);
-
-            if (!$uploaded) {
-                array_push($errors, "Failed to upload file!");
-            }
 
 
             // Insert data
-            if (count($errors) == 0 && $uploaded) {
-                $_SESSION['namaDepan'] = $namaDepan;
-                $_SESSION['namaTengah'] = $namaTengah;
-                $_SESSION['namaBelakang'] = $namaBelakang;
-                $_SESSION['tempatLahir'] = $tempatLahir;
-                $_SESSION['tanggalLahir'] = $tanggalLahir;
-                $_SESSION['nik'] = $nik;
-                $_SESSION['wargaNegara'] = $wargaNegara;
-                $_SESSION['email'] = $email;
-                $_SESSION['noHP'] = $noHP;
-                $_SESSION['alamat'] = $alamat;
-                $_SESSION['kodePos'] = $kodePos;
-                $_SESSION['fotoProfil'] = $fileName;
-                $_SESSION['username'] = $username;
-                $_SESSION['password1'] = $password1;
-                $_SESSION['password2'] = $password2;
+            if (!$uploaded) {
+                array_push($errors, "Failed to upload file!");
 
-                echo "Username: " . $_SESSION['username'] . "<br>";
-                header('Location: index.php');
-            } else {
                 foreach ($errors as $error) {
                     echo $error . "<br>";
                 }
-                echo "<br><a href='register.php'><u>Kembali</u></a>";
+                echo "<br><a href='index.php'><u>Kembali</u></a>";
+            } else {
+                if (count($errors) == 0) {
+                    $str_query = "INSERT INTO `mahasiswa` (`nama_depan`, `nama_tengah`, `nama_belakang`, `tempat_lahir`, `tanggal_lahir`, `nik`, `warga_negara`, `email`, `no_hp`, `alamat`, `kode_pos`, `foto_profil`, `username`, `password`) VALUES ('$namaDepan', '$namaTengah', '$namaBelakang', '$tempatLahir', '$tanggalLahir', '$nik', '$wargaNegara', '$email', '$noHP', '$alamat', '$kodePos', '$fileName', '$username', '$password1')";
+
+                    $result = mysqli_query($connection, $str_query);
+
+                    if ($result) {
+                        header('Location: index.php');
+                    } else {
+                        echo '<script type="text/javascript">';
+                        echo 'alert("Registrasi Gagal!");';
+                        echo 'window.location.href = "index.php";';
+                        echo '</script>';
+                    }
+                } else {
+                    foreach ($errors as $error) {
+                        echo $error . "<br>";
+                    }
+                    echo "<br><a href='index.php'><u>Kembali</u></a>";
+                }
             }
         } else {
-            echo "Register Failed!";
+            echo '<script type="text/javascript">';
+            echo 'alert("Registrasi Gagal!");';
+            echo 'window.location.href = "index.php";';
+            echo '</script>';
         }
         ?>
     </div>
